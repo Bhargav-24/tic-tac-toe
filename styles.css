@@ -18,16 +18,23 @@ body {
     letter-spacing: 2px;
 }
 
+button {
+    all: unset;
+}
+
 .btn {
     display: inline-block;
     padding: 16px 32px;
-    background-color: #0a0a0a;        /* same as bg initially */
-    color: #ffd700;                   /* yellow text */
-    border: 3px solid #ffd700;        /* yellow outline */
+    background-color: #0a0a0a;
+    color: #ffd700;
+    border: 3px solid #ffd700;
     text-decoration: none;
     font-size: 14px;
     letter-spacing: 2px;
-    transition: all 0.15s ease-in-out;
+    font-family: 'Press Start 2P', cursive;
+    font-weight: normal;
+    cursor: pointer;
+    outline: none;
 }
 
 .btn:hover {
@@ -40,4 +47,99 @@ body {
     background-color: #9c8500;        /* darker yellow */
     color: #0a0a0a;
     border-color: #9c8500;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 120px);
+    grid-template-rows: repeat(3, 120px);
+    gap: 8px;
+    margin: 40px 0;
+}
+
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px;
+    color: #ffd700;
+    background-color: #0a0a0a;
+    border: 3px solid #ffd700;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.cell:hover {
+    background-color: #ffd700;
+    color: #0a0a0a;
+}
+
+.game-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.left-panel {
+    position: absolute;
+    left: 280px;     /* adjust if needed */
+    top: 220px;     /* align vertically with board */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.left-panel h4 {
+    color: #ffd700;
+    margin: 12px 0;
+}
+
+.left-panel .btn {
+    margin-top: 60px;
+}
+
+.center-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 420px;
+}
+
+.bottom-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+}
+
+#result {
+    min-height: 24px;
+    color: #ffd700;
+    margin-top: 10px;
+}
+
+#turn {
+    min-height: 24px;
+    color: #ffd700;
+    margin-top: 6px;
+    text-align: center;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 120px);
+    grid-template-rows: repeat(3, 120px);
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.scores {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+/* Prevent flashing of the Play Again button before JS runs */
+#playagain {
+    display: none;
 }

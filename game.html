@@ -4,16 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h2 id="turn"></h2>
-    <div class="board"></div>
-    <h2 id="result"></h2>
-    <h4 id="p1score"></h4>
-    <h4 id="p2score"></h4>
-    <button id="reset" class="btn">Reset</button>
-    <button id="playagain" class="btn">Play Again</button>
-    <a href="/index" class="btn">Back</a>
+    <div class="game-container">
+        <div class="left-panel">
+            <div class="scores">
+                <h4 id="p1score"></h4>
+                <h4 id="p2score"></h4>
+            </div>
+            <button id="reset" class="btn">Reset</button>
+        </div>
+        <div class="center-panel">
+            <h2 id="turn"></h2>
+            <div class="board"></div>
+            <h2 id="result"></h2>
+            <div class="bottom-buttons">
+                <button id="playagain" class="btn">Play Again</button>
+                <a href="/" class="btn">Back</a>
+            </div>
+        </div>
+    </div>
     <script src="logic.js"></script>
     <script src="script.js"></script>
 </body>
