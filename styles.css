@@ -73,6 +73,11 @@ button {
     background-color: #ffd700;
     color: #0a0a0a;
 }
+.cell:active {
+    background-color: #9c8500;        /* darker yellow */
+    color: #0a0a0a;
+    border-color: #9c8500;
+}
 
 .game-container {
     display: flex;
