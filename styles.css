@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+    margin: 0;
+    height: 100vh;
+    background-color: #0a0a0a; /* near black */
+    display: flex;
+    flex-direction: column;
+    padding-top: 120px;
+    align-items: center;
+    font-family: 'Press Start 2P', cursive;
+}
+
+#tag {
+    color: #ffd700; /* arcade yellow */
+    margin-bottom: 80px;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 16px 32px;
+    background-color: #0a0a0a;        /* same as bg initially */
+    color: #ffd700;                   /* yellow text */
+    border: 3px solid #ffd700;        /* yellow outline */
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: 2px;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn:hover {
+    background-color: #ffd700;        /* yellow fill */
+    color: #0a0a0a;                   /* black text */
+    border-color: #ffd700;
+}
+
+.btn:active {
+    background-color: #9c8500;        /* darker yellow */
+    color: #0a0a0a;
+    border-color: #9c8500;
+}
