@@ -6,8 +6,45 @@
     <title>Tic Tac Toe</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <h1 id="tag">Let's play Tic Tac Toe!</h1>
-    <a id="pnp" class="btn" href="/game">Pass And Play</a>
+<body class="landing">
+
+    <!-- CRT scanline overlay -->
+    <div class="scanlines"></div>
+    <!-- Animated grid bg -->
+    <div class="grid-bg"></div>
+
+    <div class="landing-content">
+        <div class="title-block">
+            <div class="title-glow-ring"></div>
+            <p class="pre-title">INSERT COIN</p>
+            <h1 id="tag">TIC<br><span class="accent-x">TAC</span><br>TOE</h1>
+            <div class="title-underline"></div>
+        </div>
+
+        <a id="pnp" class="btn" href="/game">
+            <span class="btn-icon">▶</span>
+            PASS &amp; PLAY
+        </a>
+
+    </div>
+
+    <script>
+        // Floating pixel particles
+        const body = document.body;
+        for (let i = 0; i < 18; i++) {
+            const px = document.createElement('div');
+            px.className = 'particle';
+            px.style.cssText = `
+                left:${Math.random()*100}%;
+                top:${Math.random()*100}%;
+                animation-delay:${Math.random()*6}s;
+                animation-duration:${4 + Math.random()*5}s;
+                width:${Math.random() > 0.5 ? '4px' : '6px'};
+                height:${Math.random() > 0.5 ? '4px' : '6px'};
+                background:${['#00f5ff','#ff00aa','#ffee00'][Math.floor(Math.random()*3)]};
+            `;
+            body.appendChild(px);
+        }
+    </script>
 </body>
 </html>

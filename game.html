@@ -6,25 +6,45 @@
     <title>Tic Tac Toe</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="game-page">
+
+    <div class="scanlines"></div>
+    <div class="grid-bg"></div>
+
     <div class="game-container">
+
+        <!-- LEFT PANEL - Scores -->
         <div class="left-panel">
             <div class="scores">
-                <h4 id="p1score"></h4>
-                <h4 id="p2score"></h4>
+                <div class="score-card p1-card">
+                    <span class="score-label">P1</span>
+                    <span class="score-symbol x-symbol">X</span>
+                    <span class="score-value" id="p1score">0</span>
+                </div>
+                <div class="score-card p2-card">
+                    <span class="score-label">P2</span>
+                    <span class="score-symbol o-symbol">O</span>
+                    <span class="score-value" id="p2score">0</span>
+                </div>
             </div>
-            <button id="reset" class="btn">Reset</button>
+            <button id="reset" class="btn btn-small">↺ RESET</button>
         </div>
+
+        <!-- CENTER PANEL - Board -->
         <div class="center-panel">
-            <h2 id="turn"></h2>
-            <div class="board"></div>
-            <h2 id="result"></h2>
+            <h2 id="turn" class="turn-text"></h2>
+            <div class="board-wrapper">
+                <div class="board"></div>
+            </div>
+            <h2 id="result" class="result-text"></h2>
             <div class="bottom-buttons">
-                <button id="playagain" class="btn">Play Again</button>
-                <a href="/" class="btn">Back</a>
+                <button id="playagain" class="btn">▶ PLAY AGAIN</button>
+                <a href="/" class="btn btn-ghost">← BACK</a>
             </div>
         </div>
+
     </div>
+
     <script src="logic.js"></script>
     <script src="script.js"></script>
 </body>
