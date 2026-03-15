@@ -510,3 +510,32 @@ body.game-page {
 
     .cell { font-size: 34px; }
 }
+
+/* ═══════════════════════════════════════════
+   SITE FOOTER
+═══════════════════════════════════════════ */
+.site-footer {
+    position: fixed;
+    bottom: 16px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: var(--font-hud);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #ff4444;
+    text-shadow: 0 0 8px #ff444488;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.site-footer a {
+    color: #ff4444;
+    text-decoration: none;
+    pointer-events: all;
+    transition: text-shadow 0.15s;
+}
+
+.site-footer a:hover {
+    text-shadow: 0 0 12px #ff4444, 0 0 24px #ff444466;
+}
