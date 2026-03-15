@@ -14,9 +14,16 @@ if (!roomCode || !myToken) {
 let myPlayerIdx = null;
 let mySymbol    = null;
 let oppSymbol   = null;
-let myReadyUp   = false;
-let gameStarted = false;
+let myReadyUp      = false;
+let gameStarted    = false;
+let symbolFlipped  = false;
 
+
+// ─── Symbol helper ────────────────────────────────────────────────────────────
+function getSymbol(playerIdx, flipped) {
+    if (!flipped) return playerIdx === 0 ? "X" : "O";
+    return playerIdx === 0 ? "O" : "X";
+}
 // ─── DOM ──────────────────────────────────────────────────────────────────────
 const boardEl           = document.getElementById("board");
 const turnEl            = document.getElementById("turn");
@@ -59,22 +66,14 @@ socket.emit("join-game", { code: roomCode, token: myToken });
 // ─── Socket events ────────────────────────────────────────────────────────────
 
 // Server confirmed our identity
-socket.on("game-joined", ({ playerIdx, scores, board }) => {
-    myPlayerIdx = playerIdx;
-    mySymbol    = playerIdx === 0 ? "X" : "O";
-    oppSymbol   = playerIdx === 0 ? "O" : "X";
-
-    mySymbolEl.textContent  = mySymbol;
-    oppSymbolEl.textContent = oppSymbol;
-    mySymbolEl.className    = `score-symbol ${mySymbol  === "X" ? "x-symbol" : "o-symbol"}`;
-    oppSymbolEl.className   = `score-symbol ${oppSymbol === "X" ? "x-symbol" : "o-symbol"}`;
-
+socket.on("game-joined", ({ playerIdx, scores, board, symbolFlipped: flipped }) => {
+    myPlayerIdx   = playerIdx;
+    symbolFlipped = flipped || false;
+    applySymbols();
     updateScores(scores);
 
     // Restore board state in case of reconnect
     if (board.some(c => c !== null)) renderBoard(board);
-
-    // Keep waiting overlay until both players are in (both-ready event)
 });
 
 // Both players connected — game can start
@@ -116,7 +115,9 @@ socket.on("opponent-ready", () => {
     if (!myReadyUp) playAgainBtn.textContent = "▶ PLAY AGAIN (OPP READY)";
 });
 
-socket.on("game-restart", ({ scores }) => {
+socket.on("game-restart", ({ scores, currentTurn, symbolFlipped: flipped }) => {
+    symbolFlipped = flipped;
+    applySymbols();
     resetBoardUI();
     updateScores(scores);
     resultEl.textContent = "";
@@ -126,7 +127,7 @@ socket.on("game-restart", ({ scores }) => {
     playAgainBtn.classList.remove("waiting");
     myReadyUp = false;
     boardEl.classList.remove("locked");
-    setTurnUI(0);
+    setTurnUI(currentTurn);
 });
 
 socket.on("opponent-disconnected", () => {
@@ -223,6 +224,15 @@ function resetBoardUI() {
         c.textContent = "";
         c.classList.remove("x-cell", "o-cell", "taken", "winner");
     });
+}
+
+function applySymbols() {
+    mySymbol    = getSymbol(myPlayerIdx, symbolFlipped);
+    oppSymbol   = getSymbol(myPlayerIdx === 0 ? 1 : 0, symbolFlipped);
+    mySymbolEl.textContent  = mySymbol;
+    oppSymbolEl.textContent = oppSymbol;
+    mySymbolEl.className    = `score-symbol ${mySymbol  === "X" ? "x-symbol" : "o-symbol"}`;
+    oppSymbolEl.className   = `score-symbol ${oppSymbol === "X" ? "x-symbol" : "o-symbol"}`;
 }
 
 function setTurnUI(currentTurnIdx) {

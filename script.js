@@ -1,9 +1,10 @@
 const game = Game();
+let symbolFlipped = false; // false: P1=X P2=O | true: P1=O P2=X
 
 const boardDiv     = document.querySelector(".board");
 const turnText     = document.getElementById("turn");
 const resultText   = document.getElementById("result");
-const p1ScoreText  = document.getElementById("p1score");
+const p1ScoreText  = document.getElementById("p1score");   // hidden <span>, kept for compat
 const p2ScoreText  = document.getElementById("p2score");
 const resetBtn     = document.getElementById("reset");
 const playAgainBtn = document.getElementById("playagain");
@@ -25,8 +26,12 @@ boardDiv.addEventListener("click", (e) => {
     if (e.target.classList.contains("taken")) return;
 
     const index      = Number(e.target.dataset.index);
-    const playerBefore = game.getCurrentPlayer();           // "P1" or "P2"
-    const symbol     = playerBefore === "P1" ? "X" : "O";  // what goes on the board
+    const playerBefore = game.getCurrentPlayer();  // "P1" or "P2"
+    const isP1 = playerBefore === "P1";
+    // X always goes first but which player IS X alternates each round
+    const symbol = isP1
+        ? (symbolFlipped ? "O" : "X")
+        : (symbolFlipped ? "X" : "O");
     const result     = game.playMove(index);
 
     if (result === null) return;
@@ -60,6 +65,7 @@ boardDiv.addEventListener("click", (e) => {
 });
 
 playAgainBtn.addEventListener("click", () => {
+    symbolFlipped = !symbolFlipped;
     game.resetBoard();
     resultText.textContent = "";
     resultText.classList.remove("show");
@@ -68,6 +74,7 @@ playAgainBtn.addEventListener("click", () => {
 });
 
 resetBtn.addEventListener("click", () => {
+    symbolFlipped = false;
     game.resetScores();
     saveScores();
     updateUI();
@@ -94,12 +101,14 @@ function updateUI() {
         }
     });
 
-    // Turn indicator — current is "P1" or "P2"
+    // Turn indicator — show correct symbol accounting for flip state
     if (!over) {
-        const isP1   = current === "P1";
-        const cls    = isP1 ? "x-turn" : "o-turn";
-        const sym    = isP1 ? "X" : "O";
-        const name   = isP1 ? "PLAYER 1" : "PLAYER 2";
+        const isP1 = current === "P1";
+        const sym  = isP1
+            ? (symbolFlipped ? "O" : "X")
+            : (symbolFlipped ? "X" : "O");
+        const cls  = sym === "X" ? "x-turn" : "o-turn";
+        const name = isP1 ? "PLAYER 1" : "PLAYER 2";
         turnText.innerHTML = `<span class="${cls}">${sym}</span> — ${name}'S TURN`;
     } else {
         turnText.textContent = "";

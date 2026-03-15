@@ -96,6 +96,9 @@ btnBackToChoose.addEventListener("click", () => {
 });
 
 btnCancelWait.addEventListener("click", () => {
+    // Emit cancel explicitly — don't rely solely on disconnect event
+    // because on slow/free servers the disconnect can arrive late
+    socket.emit("cancel-room");
     socket.disconnect();
     window.location.href = "/";
 });
@@ -104,7 +107,20 @@ btnJoin.addEventListener("click", () => {
     const code = getTypedCode();
     if (code.length !== 6) { showError("ENTER ALL 6 DIGITS"); return; }
     hideError();
-    socket.emit("join-room", { code });
+
+    // Show a brief "checking" state before joining —
+    // gives the server time to process any recent room cancellations
+    // (important on slow/free-tier servers)
+    btnJoin.textContent   = "CHECKING...";
+    btnJoin.style.opacity = "0.5";
+    btnJoin.style.pointerEvents = "none";
+
+    setTimeout(() => {
+        btnJoin.textContent   = "▶ JOIN";
+        btnJoin.style.opacity = "";
+        btnJoin.style.pointerEvents = "";
+        socket.emit("join-room", { code });
+    }, 1500);
 });
 
 btnCopy.addEventListener("click", () => {

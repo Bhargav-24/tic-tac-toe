@@ -6,7 +6,12 @@ const crypto     = require("crypto");
 
 const app    = express();
 const server = http.createServer(app);
-const io     = new Server(server);
+const io     = new Server(server, {
+    cors: { origin: "*" },          // Railway proxies requests cross-origin
+    transports: ["websocket", "polling"]  // prefer websocket, fall back to polling
+});
+
+app.set("trust proxy", 1);          // trust Railway's reverse proxy
 
 app.use(express.static(path.join(__dirname)));
 
@@ -61,17 +66,29 @@ io.on("connection", (socket) => {
             tokens:      [token, null],
             sockets:     [null, null],
             board:       Array(9).fill(null),
-            currentTurn: 0,
-            scores:      { 0: 0, 1: 0 },
-            gameOver:    false
+            currentTurn:  0,    // X always goes first; idx of whoever has X
+            symbolFlipped: false, // false: P1=X P2=O | true: P1=O P2=X
+            scores:        { 0: 0, 1: 0 },
+            gameOver:      false
         };
 
         // Store creator's lobby socket so we can reach them when P2 joins
         rooms[code].lobbySocket = socket.id;
         socket.join(code);
+        socket.data.code = code;  // so cancel-room + disconnect can find the room
 
         // Send back code + token — lobby.js saves token in sessionStorage
         socket.emit("room-created", { code, token });
+    });
+
+    // ── CANCEL ROOM (creator clicks cancel in lobby) ─────────────────────────
+    // Explicit event so room is deleted immediately, even on slow servers
+    // where the disconnect event might arrive late
+    socket.on("cancel-room", () => {
+        const code = socket.data.code;
+        if (code && rooms[code]) {
+            delete rooms[code];
+        }
     });
 
     // ── JOIN ROOM ─────────────────────────────────────────────────────────────
@@ -131,7 +148,7 @@ io.on("connection", (socket) => {
         socket.data.playerIdx = playerIdx;
 
         // Confirm to this player
-        socket.emit("game-joined", { playerIdx, scores: room.scores, board: room.board });
+        socket.emit("game-joined", { playerIdx, scores: room.scores, board: room.board, symbolFlipped: room.symbolFlipped });
 
         // If both players are now connected:
         // - first time ever: broadcast both-ready (shows "Opponent connected" message)
@@ -157,7 +174,10 @@ io.on("connection", (socket) => {
         if (room.currentTurn !== playerIdx) return;
         if (room.board[index] !== null) return;
 
-        const symbol      = playerIdx === 0 ? "X" : "O";
+        // Symbol depends on whether symbols have been flipped this round
+        const symbol = (playerIdx === 0)
+            ? (room.symbolFlipped ? "O" : "X")
+            : (room.symbolFlipped ? "X" : "O");
         room.board[index] = symbol;
 
         const winner = checkWin(room.board);
@@ -177,7 +197,7 @@ io.on("connection", (socket) => {
                 winnerIdx: null, scores: room.scores
             });
         } else {
-            room.currentTurn = playerIdx === 0 ? 1 : 0;
+            room.currentTurn = playerIdx === 0 ? 1 : 0; // still just toggles between 0 and 1
             io.to(code).emit("move-made", {
                 board: room.board, result: "continue",
                 winnerIdx: null, scores: room.scores,
@@ -214,11 +234,19 @@ io.on("connection", (socket) => {
         socket.to(code).emit("opponent-ready");
 
         if (room.readyUp.size === 2) {
-            room.board       = Array(9).fill(null);
-            room.currentTurn = 0;
-            room.gameOver    = false;
-            room.readyUp     = new Set();
-            io.to(code).emit("game-restart", { scores: room.scores });
+            // Flip symbols for this round — X always goes first,
+            // but which player IS X alternates
+            room.symbolFlipped = !room.symbolFlipped;
+            // X holder is: playerIdx 1 when flipped, playerIdx 0 when not
+            room.currentTurn   = room.symbolFlipped ? 1 : 0;
+            room.board         = Array(9).fill(null);
+            room.gameOver      = false;
+            room.readyUp       = new Set();
+            io.to(code).emit("game-restart", {
+                scores:        room.scores,
+                currentTurn:   room.currentTurn,
+                symbolFlipped: room.symbolFlipped
+            });
         }
     });
 
@@ -230,22 +258,48 @@ io.on("connection", (socket) => {
         const room      = rooms[code];
         const playerIdx = socket.data.playerIdx;
 
-        // Null out this socket slot but keep the room and token alive
-        // so the player can reconnect (e.g. page refresh)
-        if (playerIdx !== undefined) {
-            room.sockets[playerIdx] = null;
+        // ── Lobby disconnect (creator's lobby socket navigated away) ────────
+        // playerIdx is undefined on lobby sockets.
+        // Only delete the room if game-start hasn't fired yet (tokens[1] still null).
+        // If a joiner already joined, game-start was sent — keep the room alive
+        // so both players can land on the game page.
+        if (playerIdx === undefined) {
+            if (room.tokens[1] === null) {
+                // Nobody joined yet — real cancel/close, clean up
+                delete rooms[code];
+            }
+            // Otherwise game is starting, lobby socket disconnect is expected — ignore
+            return;
         }
 
-        // Only notify opponent if the game had actually started (both were in)
-        // Give a 15s grace period for accidental disconnects / refreshes
+        // ── Game page disconnect ─────────────────────────────────────────────
+        // Null out socket slot but keep room alive so player can reconnect
+        room.sockets[playerIdx] = null;
+
+        // Cancel any existing grace timer for this player
+        if (room._dcTimeout) clearTimeout(room._dcTimeout);
+
+        // If game never started (P2 never joined), clean up immediately
+        if (!room.started) {
+            delete rooms[code];
+            return;
+        }
+
+        // If both players are now disconnected, close immediately — no point waiting
+        if (!room.sockets[0] && !room.sockets[1]) {
+            if (room._dcTimeout) clearTimeout(room._dcTimeout);
+            delete rooms[code];
+            return;
+        }
+
+        // One player still connected — give 15s grace for refresh/accidental close
         room._dcTimeout = setTimeout(() => {
             if (!rooms[code]) return;
-            // If still disconnected after grace period, end the game
             if (!room.sockets[playerIdx]) {
                 socket.to(code).emit("opponent-disconnected");
                 delete rooms[code];
             }
-        }, 15000);
+        }, 10000);
     });
 });
 
