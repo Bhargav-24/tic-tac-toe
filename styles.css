@@ -468,8 +468,20 @@ body.game-page {
 
 /* score values are .score-value spans — no override needed */
 
-/* Prevent FOUC */
-#playagain { display: none; }
+.btn-ghost-mag {
+    color: var(--magenta);
+    border-color: var(--magenta);
+    box-shadow: var(--glow-mag);
+}
+
+.btn-ghost-mag:hover {
+    background: var(--magenta);
+    color: var(--bg);
+    box-shadow: var(--glow-mag), 0 0 60px #ff00aa44;
+}
+
+/* .hidden utility — JS toggles this to show/hide the play-again button */
+.hidden { display: none !important; }
 
 /* ═══════════════════════════════════════════
    RESPONSIVE

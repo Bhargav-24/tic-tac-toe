@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Lobby — Tic Tac Toe</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="lobby.css">
+</head>
+<body class="lobby-page">
+
+    <div class="scanlines"></div>
+    <div class="grid-bg"></div>
+
+    <div class="lobby-container" id="lobbyContainer">
+
+        <!-- ── STEP 1: Choose action ─────────────────── -->
+        <div class="lobby-screen" id="screenChoose">
+            <p class="pre-title">ONLINE</p>
+            <h1 class="lobby-title">PLAY WITH<br><span class="accent-mag">FRIEND</span></h1>
+
+            <div class="lobby-actions">
+                <button class="btn" id="btnCreate">
+                    <span>✦</span> CREATE ROOM
+                </button>
+                <div class="divider">— OR —</div>
+                <button class="btn btn-ghost-cyan" id="btnShowJoin">
+                    ⌨ ENTER CODE
+                </button>
+            </div>
+
+            <a href="/" class="btn btn-ghost">← BACK</a>
+        </div>
+
+        <!-- ── STEP 2a: Waiting for opponent ─────────── -->
+        <div class="lobby-screen hidden" id="screenWaiting">
+            <p class="pre-title blink">WAITING FOR OPPONENT...</p>
+            <h2 class="lobby-title small">ROOM CODE</h2>
+
+            <div class="code-display" id="codeDisplay">------</div>
+
+            <div class="share-row">
+                <input class="share-input" id="shareLink" readonly value="" />
+                <button class="btn btn-small" id="btnCopy">COPY</button>
+            </div>
+            <p class="share-hint">Share the code or the link with your friend</p>
+
+            <button class="btn btn-ghost-red" id="btnCancelWait">✕ CANCEL</button>
+        </div>
+
+        <!-- ── STEP 2b: Join by code ─────────────────── -->
+        <div class="lobby-screen hidden" id="screenJoin">
+            <p class="pre-title">JOIN ROOM</p>
+            <h2 class="lobby-title small">ENTER CODE</h2>
+
+            <div class="code-inputs" id="codeInputs">
+                <input class="code-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" />
+                <input class="code-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" />
+                <input class="code-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" />
+                <input class="code-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" />
+                <input class="code-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" />
+                <input class="code-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" />
+            </div>
+
+            <p class="error-text hidden" id="joinError"></p>
+
+            <div class="lobby-actions">
+                <button class="btn" id="btnJoin">▶ JOIN</button>
+                <button class="btn btn-ghost" id="btnBackToChoose">← BACK</button>
+            </div>
+        </div>
+
+        <!-- ── STEP 3: Connecting... ──────────────────── -->
+        <div class="lobby-screen hidden" id="screenConnecting">
+            <p class="pre-title blink">CONNECTING...</p>
+            <div class="spinner"></div>
+        </div>
+
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="lobby.js"></script>
+</body>
+</html>

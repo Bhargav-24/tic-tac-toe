@@ -1,0 +1,303 @@
+/* ═══════════════════════════════════════════
+   ONLINE GAME EXTRAS
+   (extends styles.css, no duplication)
+═══════════════════════════════════════════ */
+
+/* ── Overlays ────────────────────────────── */
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: rgba(6,6,8,0.88);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+
+.overlay.hidden { display: none; }
+
+.overlay-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    text-align: center;
+    padding: 20px;
+    animation: fadein 0.3s ease both;
+}
+
+.overlay-title {
+    font-family: var(--font-pixel);
+    font-size: clamp(20px, 4vw, 32px);
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    line-height: 1.4;
+    letter-spacing: 3px;
+}
+
+.overlay-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* ── Spinner (reused from lobby.css) ─────── */
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--dim);
+    border-top-color: var(--cyan);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    box-shadow: var(--glow-cyan);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Room code badge in left panel ───────── */
+.room-code-badge {
+    font-family: var(--font-hud);
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    border: 1px solid var(--dim);
+    padding: 6px 10px;
+    text-align: center;
+    margin-top: 8px;
+}
+
+/* ── Turn lock — dim board when not your turn */
+.board.locked .cell:not(.taken):hover {
+    background: var(--bg2);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* ── Score cards — YOU vs OPP labelling ──── */
+.score-card .score-symbol.x-symbol {
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+}
+
+.score-card .score-symbol.o-symbol {
+    color: var(--magenta);
+    text-shadow: var(--glow-mag);
+}
+
+/* ── Active player card highlight ────────── */
+.score-card.active-turn {
+    animation: cardpulse 1.2s ease-in-out infinite alternate;
+}
+
+.p1-card.active-turn { box-shadow: 0 0 20px #00f5ff88, var(--glow-cyan); }
+.p2-card.active-turn { box-shadow: 0 0 20px #ff00aa88, var(--glow-mag);  }
+
+@keyframes cardpulse {
+    from { transform: scale(1); }
+    to   { transform: scale(1.03); }
+}
+
+/* ── Play again waiting state ─────────────── */
+.btn.waiting {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ── Pre-title (shared with lobby) ──────── */
+.pre-title {
+    font-family: var(--font-hud);
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: var(--magenta);
+    text-shadow: var(--glow-mag);
+}
+
+.pre-title.blink { animation: blink 1.2s step-end infinite; }
+
+/* ═══════════════════════════════════════════
+   CHAT PANEL
+═══════════════════════════════════════════ */
+.chat-panel {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    min-width: 300px;
+    height: 460px;      /* fixed — messages will scroll within this */
+    align-self: flex-start;
+    margin-top: 60px;   /* visually aligns with board, not eating into scroll height */
+    gap: 0;
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border: 2px solid var(--dim);
+    border-bottom: none;
+    background: var(--bg2);
+}
+
+.chat-title {
+    font-family: var(--font-hud);
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--dim);
+}
+
+/* Unread message dot */
+.chat-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--magenta);
+    box-shadow: var(--glow-mag);
+    display: none;
+    animation: dotpulse 1s ease-in-out infinite alternate;
+}
+
+.chat-indicator.active { display: block; }
+
+@keyframes dotpulse {
+    from { opacity: 1; }
+    to   { opacity: 0.3; }
+}
+
+.chat-messages {
+    flex: 1;          /* fills all remaining height in the panel */
+    min-height: 0;    /* critical — lets flex child shrink below content size */
+    overflow-y: auto;
+    padding: 12px;
+    border: 2px solid var(--dim);
+    border-bottom: none;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scroll-behavior: smooth;
+}
+
+/* Scrollbar styling */
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-track { background: var(--bg); }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--dim); }
+
+.chat-msg {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-width: 100%;
+    animation: msgslide 0.2s ease both;
+}
+
+@keyframes msgslide {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.chat-msg.mine  { align-items: flex-end; }
+.chat-msg.theirs { align-items: flex-start; }
+
+.chat-bubble {
+    font-family: var(--font-hud);
+    font-size: 11px;
+    line-height: 1.6;
+    padding: 9px 13px;
+    max-width: 92%;
+    word-break: break-word;
+    letter-spacing: 0.5px;
+}
+
+.chat-msg.mine .chat-bubble {
+    background: #001a1a;
+    color: var(--cyan);
+    border: 1px solid var(--cyan);
+    box-shadow: 0 0 8px #00f5ff22;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
+}
+
+.chat-msg.theirs .chat-bubble {
+    background: #1a0010;
+    color: var(--magenta);
+    border: 1px solid var(--magenta);
+    box-shadow: 0 0 8px #ff00aa22;
+    clip-path: polygon(6px 0, 100% 0, 100% 100%, 0 100%, 0 6px);
+}
+
+.chat-meta {
+    font-family: var(--font-hud);
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: var(--dim);
+}
+
+.chat-system {
+    font-family: var(--font-hud);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-align: center;
+    padding: 4px 0;
+}
+
+/* Input row */
+.chat-input-row {
+    display: flex;
+    border: 2px solid var(--dim);
+    background: var(--bg2);
+    transition: border-color 0.15s;
+}
+
+.chat-input-row:focus-within {
+    border-color: var(--cyan);
+    box-shadow: var(--glow-cyan);
+}
+
+.chat-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--white);
+    font-family: var(--font-hud);
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 10px 12px;
+    caret-color: var(--cyan);
+    min-width: 0;
+}
+
+.chat-input::placeholder { color: var(--dim); }
+
+.chat-send-btn {
+    all: unset;
+    padding: 10px 14px;
+    color: var(--cyan);
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+    border-left: 1px solid var(--dim);
+}
+
+.chat-send-btn:hover {
+    background: var(--cyan);
+    color: var(--bg);
+}
+
+/* ── Responsive ──────────────────────────── */
+@media (max-width: 1000px) {
+    .chat-panel {
+        width: 100%;
+        min-width: unset;
+        height: auto;
+        padding-top: 0;
+    }
+
+    .chat-messages {
+        height: 200px;  /* fixed fallback when panel is auto height */
+        flex: none;
+    }
+}

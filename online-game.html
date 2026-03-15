@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Game — Tic Tac Toe</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="online-game.css">
+</head>
+<body class="game-page">
+
+    <div class="scanlines"></div>
+    <div class="grid-bg"></div>
+
+    <!-- ── Overlay: waiting for 2nd player (shouldn't normally show
+             since lobby waits, but good safety net) ── -->
+    <div class="overlay hidden" id="overlayWaiting">
+        <div class="overlay-box">
+            <p class="pre-title blink">WAITING FOR OPPONENT...</p>
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <!-- ── Overlay: opponent disconnected ── -->
+    <div class="overlay hidden" id="overlayDisconnected">
+        <div class="overlay-box">
+            <p class="pre-title">OPPONENT LEFT</p>
+            <h2 class="overlay-title">CONNECTION<br>LOST</h2>
+            <div class="overlay-actions">
+                <a href="/lobby" class="btn">FIND NEW GAME</a>
+                <a href="/"     class="btn btn-ghost">← HOME</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Main game UI ── -->
+    <div class="game-container" id="gameUI">
+
+        <!-- LEFT: Scores -->
+        <div class="left-panel">
+            <div class="scores">
+                <div class="score-card p1-card" id="p1Card">
+                    <span class="score-label">YOU</span>
+                    <span class="score-symbol" id="mySymbol">?</span>
+                    <span class="score-value" id="myScore">0</span>
+                </div>
+                <div class="score-card p2-card" id="p2Card">
+                    <span class="score-label">OPP</span>
+                    <span class="score-symbol" id="oppSymbol">?</span>
+                    <span class="score-value" id="oppScore">0</span>
+                </div>
+            </div>
+            <div class="room-code-badge" id="roomCodeBadge"></div>
+        </div>
+
+        <!-- CENTER: Board -->
+        <div class="center-panel">
+            <h2 id="turn" class="turn-text"></h2>
+
+            <div class="board-wrapper">
+                <div class="board" id="board"></div>
+            </div>
+
+            <h2 id="result" class="result-text"></h2>
+
+            <div class="bottom-buttons">
+                <button id="playagain" class="btn hidden">▶ PLAY AGAIN</button>
+                <a href="/" class="btn btn-ghost">← LEAVE</a>
+            </div>
+        </div>
+
+        <!-- RIGHT: Chat -->
+        <div class="chat-panel" id="chatPanel">
+            <div class="chat-header">
+                <span class="chat-title">CHAT</span>
+                <span class="chat-indicator" id="chatIndicator"></span>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-system">Connected to room</div>
+            </div>
+            <div class="chat-input-row">
+                <input
+                    class="chat-input"
+                    id="chatInput"
+                    type="text"
+                    maxlength="100"
+                    placeholder="say something..."
+                    autocomplete="off"
+                />
+                <button class="chat-send-btn" id="chatSendBtn">▶</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="online-game.js"></script>
+</body>
+</html>

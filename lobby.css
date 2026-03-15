@@ -1,0 +1,223 @@
+/* ═══════════════════════════════════════════
+   LOBBY PAGE
+═══════════════════════════════════════════ */
+body.lobby-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.lobby-container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+    animation: fadein 0.5s ease both;
+}
+
+.lobby-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    text-align: center;
+}
+
+.lobby-screen.hidden { display: none; }
+
+/* ── Title ───────────────────────────────── */
+.pre-title {
+    font-family: var(--font-hud);
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: var(--magenta);
+    text-shadow: var(--glow-mag);
+}
+
+.pre-title.blink { animation: blink 1.2s step-end infinite; }
+
+.lobby-title {
+    font-family: var(--font-pixel);
+    font-size: clamp(22px, 5vw, 36px);
+    line-height: 1.4;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    letter-spacing: 3px;
+}
+
+.lobby-title.small { font-size: clamp(16px, 3.5vw, 24px); }
+
+.accent-mag {
+    color: var(--magenta);
+    text-shadow: var(--glow-mag);
+}
+
+/* ── Action buttons group ────────────────── */
+.lobby-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+}
+
+.divider {
+    font-family: var(--font-hud);
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--dim);
+}
+
+.btn-ghost-cyan {
+    color: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: var(--glow-cyan);
+}
+
+.btn-ghost-cyan:hover {
+    background: var(--cyan);
+    color: var(--bg);
+    box-shadow: var(--glow-cyan), 0 0 60px #00f5ff44;
+}
+
+.btn-ghost-red {
+    color: #ff4444;
+    border-color: #ff4444;
+    box-shadow: 0 0 6px #ff4444, 0 0 20px #ff444455;
+    font-size: 9px;
+    padding: 10px 20px;
+}
+
+.btn-ghost-red:hover {
+    background: #ff4444;
+    color: var(--bg);
+}
+
+/* ── Room code big display ───────────────── */
+.code-display {
+    font-family: var(--font-pixel);
+    font-size: clamp(28px, 7vw, 48px);
+    letter-spacing: 10px;
+    color: var(--yellow);
+    text-shadow: var(--glow-yellow);
+    padding: 16px 24px;
+    border: 2px solid var(--yellow);
+    box-shadow: var(--glow-yellow);
+    background: var(--bg2);
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    animation: codepulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes codepulse {
+    from { box-shadow: var(--glow-yellow); }
+    to   { box-shadow: 0 0 16px #ffee00, 0 0 60px #ffee0066, 0 0 80px #ffee0033; }
+}
+
+/* ── Share link row ──────────────────────── */
+.share-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.share-input {
+    flex: 1;
+    background: var(--bg2);
+    border: 2px solid var(--dim);
+    color: var(--dim);
+    font-family: var(--font-hud);
+    font-size: 10px;
+    padding: 10px 12px;
+    letter-spacing: 1px;
+    outline: none;
+    min-width: 0;
+}
+
+.share-hint {
+    font-family: var(--font-hud);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* ── 6-digit code input boxes ────────────── */
+.code-inputs {
+    display: flex;
+    gap: 10px;
+}
+
+.code-digit {
+    width: 48px;
+    height: 60px;
+    text-align: center;
+    font-family: var(--font-pixel);
+    font-size: 22px;
+    color: var(--cyan);
+    background: var(--bg2);
+    border: 2px solid var(--dim);
+    outline: none;
+    caret-color: var(--cyan);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    -moz-appearance: textfield;
+}
+
+.code-digit::-webkit-outer-spin-button,
+.code-digit::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+.code-digit:focus {
+    border-color: var(--cyan);
+    box-shadow: var(--glow-cyan);
+}
+
+.code-digit.filled {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+}
+
+/* ── Error text ──────────────────────────── */
+.error-text {
+    font-family: var(--font-hud);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #ff4444;
+    text-shadow: 0 0 8px #ff4444;
+    text-align: center;
+}
+
+.error-text.hidden { display: none; }
+
+/* ── Back link ───────────────────────────── */
+.back-link {
+    font-family: var(--font-hud);
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.back-link:hover { color: var(--white); }
+
+/* ── Spinner ─────────────────────────────── */
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--dim);
+    border-top-color: var(--cyan);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    box-shadow: var(--glow-cyan);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+    .code-digit { width: 40px; height: 52px; font-size: 18px; }
+    .code-inputs { gap: 7px; }
+}
